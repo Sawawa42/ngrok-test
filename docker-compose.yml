@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   app:
+    container_name: web
     build: .
     ports:
       - "3000:3000"
@@ -11,3 +12,20 @@ services:
     environment:
       - NODE_ENV=development
     command: pnpm dev
+  ngrok:
+    container_name: ngrok
+    image: ngrok/ngrok:latest
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTH_TOKEN}
+    restart: unless-stopped
+    command:
+      - "start"
+      - "--all"
+      - "--config"
+      - "/etc/ngrok.yml"
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml
+    ports:
+      - "4040:4040"
+    depends_on:
+      - app
